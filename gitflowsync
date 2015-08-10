@@ -1,0 +1,57 @@
+#! /bin/bash
+
+## quit if there are uncommitted changes
+git diff --exit-code > /dev/null || { echo "There are uncommitted changes, quitting for your safety" && exit 1; }
+[[ `git ls-files --other --exclude-standard --directory | egrep -v '/$'` == "" ]] || 
+	{ echo "There are some untracked files, quitting for your safety" && exit 1; }
+echo "Clean working directory, pushing/pulling branches";
+
+
+##save the current branch's name
+BRANCH=`git symbolic-ref --short -q HEAD`
+
+if [[ "$1" != 'push' && $1 != 'pullonly' ]]; then
+	echo "invalid arg1, use 'push' or 'pullonly'" && exit 1;
+fi
+
+if [[ "$1" == 'push' ]]; then
+	#push the current branch if it is not master or develop
+	[[ $BRANCH == "master" || $BRANCH == "develop" ]] || { git push || git push --set-upstream origin $BRANCH || 
+		{ git pull && git push; } || { echo "aborting, fix conflicts manually in $BRANCH" && exit 1; }  } 
+
+
+	##push master and develop too, also push tags
+	git checkout master
+	git pull || { echo "aborting, fix conflicts manually in master" && exit 1; }
+	git push
+	git checkout develop
+	git pull || { echo "aborting, fix conflicts manually in develop" && exit 1; }
+	git push
+	git push --tags
+
+	##switchback to starter branch
+	git checkout $BRANCH;
+fi
+
+if [[ "$1" == 'pullonly' ]]; then
+	[[ $BRANCH == "master" || $BRANCH == "develop" ]] || 
+	{
+		git pull ||
+		{ ## on failure
+			echo "aborting, there is no remote branch to pull, or there are conflicts, fix them"
+			exit 1;
+		}
+	}
+	
+        git checkout master
+        git pull || { echo "aborting, fix conflicts manually in master" && exit 1; }
+
+        git checkout develop
+        git pull || { echo "aborting, fix conflicts manually in develop" && exit 1; }
+
+	git push --tags
+
+	git checkout $BRANCH; ## go back to the original branch
+fi
+
+exit 0;
