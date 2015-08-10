@@ -17,7 +17,7 @@ If not, repeat the steps stated in installation. You need to do it manually afte
 
 Usage:
 
-You need to be in your git projects folder, and you need to have the git flow master and develop branches (in your local and on origin).
+You need to be in your git project's folder, and you need to have existing git flow master and develop branches (in your local and on origin).
 
 Pull current (if it is not master or develop), master and develop branches:
 
