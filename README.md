@@ -4,8 +4,8 @@ Installation:
 
 Go to the folder in your terminal where you checked out the repo, there type
 
-    sudo cp gitflowsync /usr/bin/gitflowsync
-    sudo chmod o+x /usr/bin/gitflowsync
+    sudo cp gitflowsync /usr/local/bin/gitflowsync
+    sudo chmod o+x /usr/local/bin/gitflowsync
 
 Updating to latest version:
 
